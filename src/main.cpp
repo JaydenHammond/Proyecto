@@ -1,15 +1,21 @@
 #include <iostream>
 #include <Mascota.hpp>
+
 int main(int argc, char const *argv[])
 {
-    std::cout << "Juego de Mascota" << std::endl;
-    Mascota m1("El Niño")
-    m1.jugar();
-    m1.jugar();
-    m1.jugar();
+    std::cout << "Juego de mascotas" << std::endl;
 
-    std::cout << m1.Decirnombre() << "Tiene" << m1.Decirnombre() << "de hambre" << std::endl;
+    Mascota m1("Devorador de niños");
+    m1.Jugar();
+    m1.Jugar();
+    m1.Jugar();
 
-    m1.comer(5);
+    std::cout
+    << m1.DecirNombre() << " tiene "
+    << m1.DecirHambre() << " de hambre "
+
+    m1.Comer(5);
+
+
     return 0;
 }
