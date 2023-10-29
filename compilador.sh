@@ -1,1 +1,1 @@
-c++ src/main.cpp -o bin/ejecutable
+c++ src/DOOMPLAY.cpp -o bin/DOOMPLAY

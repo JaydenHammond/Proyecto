@@ -1,1 +1,1 @@
-./bin/ejecutable 
+./bin/DOOMPLAY 
