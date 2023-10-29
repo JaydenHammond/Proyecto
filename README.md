@@ -12,3 +12,5 @@ W UP
 S DOWN
 D RIGHT
 F SHOT
+
+![](images/DIagrama.jpg)
