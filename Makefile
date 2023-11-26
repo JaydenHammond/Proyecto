@@ -1,29 +1,32 @@
-INCLUDE_PATH= -IC:\msys64\mingw64\include\SDL2
+INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2
 LIB_PATH = -LC:\msys64\mingw64\lib
-LIBS = 	-lmingw32 -lSDL2main -lSDL2
+LIBS = -lmingw32 -lSDL2main -lSDL2
 FLAGS = -w -Wl,-subsystem,windows
 
 SDL = $(INCLUDE_PATH) $(LIB_PATH) $(FLAGS) $(LIBS)
 
-all :  menu direccion 
+all: menu direccion movimiento manager
 
-menu : src/menu_img.cpp
-	g++ $< $(SDL) -o bin/$@ 
+menu: src/menu_img.cpp
+	g++ $< $(SDL) -o bin/$@
 
-m : menu
+m: menu
 	./bin/menu
 
-direccion : src/direccion.cpp
-	g++ $< $(SDL) -o bin/$@ 
+direccion: src/direccion.cpp
+	g++ $< $(SDL) -o bin/$@
 
-d : direccion
+d: direccion
 	./bin/direccion
 
-movimiento : src/movimiento.cpp
-	g++ $< $(SDL) -o bin/$@ 
+movimiento: src/movimiento.cpp
+	g++ $< $(SDL) -o bin/$@
 
-mov : movimiento
+mov: movimiento
 	./bin/movimiento
 
+manager: src/SDLManager.cpp
+	g++ $< $(SDL) -o bin/$@
 
-
+mng: manager
+	./bin/manager
