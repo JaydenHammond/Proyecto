@@ -1,7 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/workspaces/proyecto'
- 
-c++ scr/DOOMPLAY.cpp -I include -o bin/DOOMPLAY
- 
-make: Leaving directory '/workspaces/proyecto'
- 

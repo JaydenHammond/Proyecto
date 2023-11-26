@@ -1,1 +1,0 @@
-c++ src/DOOMPLAY.cpp -o bin/DOOMPLAY
