@@ -5,7 +5,7 @@ FLAGS = -w -Wl,-subsystem,windows
 
 SDL = $(INCLUDE_PATH) $(LIB_PATH) $(FLAGS) $(LIBS)
 
-all : tutorial1 tutorial2 tutorial3 tutorial4 tutorial5
+all :  tutorial2 tutorial4 
 
 tutorial2 : src/menu_img.cpp
 	g++ $< $(SDL) -o bin/$@ 
@@ -19,9 +19,5 @@ tutorial4 : src/direccion.cpp
 runt4 : tutorial4
 	./bin/tutorial4
 
-tutorial5 : src/05_optimized_surface_loading_and_soft_stretching.cpp
-	g++ $< $(SDL) -o bin/$@ 
 
-runt5 : tutorial5
-	./bin/tutorial5
 
