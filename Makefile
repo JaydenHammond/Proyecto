@@ -5,19 +5,19 @@ FLAGS = -w -Wl,-subsystem,windows
 
 SDL = $(INCLUDE_PATH) $(LIB_PATH) $(FLAGS) $(LIBS)
 
-all :  tutorial2 tutorial4 
+all :  menu direccion 
 
-tutorial2 : src/menu_img.cpp
+menu : src/menu_img.cpp
 	g++ $< $(SDL) -o bin/$@ 
 
-runt2 : tutorial2
-	./bin/tutorial2
+m : menu
+	./bin/menu
 
-tutorial4 : src/direccion.cpp
+direccion : src/direccion.cpp
 	g++ $< $(SDL) -o bin/$@ 
 
-runt4 : tutorial4
-	./bin/tutorial4
+d : direccion
+	./bin/direccion
 
 
 
