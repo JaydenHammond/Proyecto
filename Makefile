@@ -19,5 +19,11 @@ direccion : src/direccion.cpp
 d : direccion
 	./bin/direccion
 
+movimiento : src/movimiento.cpp
+	g++ $< $(SDL) -o bin/$@ 
+
+mov : movimiento
+	./bin/movimiento
+
 
 
