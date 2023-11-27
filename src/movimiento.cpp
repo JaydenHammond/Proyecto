@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <stdio.h>
+#include <SDL_timer.h>
 #include <string>
+#include <SDL_image.h>
 
 const int SCREEN_WIDTH = 600;
 const int SCREEN_HEIGHT = 600;
@@ -11,19 +13,28 @@ enum KeyPressSurfaces
     KEY_PRESS_SURFACE_DOWN,
     KEY_PRESS_SURFACE_LEFT,
     KEY_PRESS_SURFACE_RIGHT,
-    KEY_PRESS_SURFACE_SHOOT,
+    KEY_PRESS_SURFACE_SHOOT_UP,
+    KEY_PRESS_SURFACE_SHOOT_DOWN,
+    KEY_PRESS_SURFACE_SHOOT_LEFT,
+    KEY_PRESS_SURFACE_SHOOT_RIGHT,
     KEY_PRESS_SURFACE_TOTAL
 };
 
+struct Player
+{
+    int centerX;
+    int centerY;
+    KeyPressSurfaces currentDirection;
+    SDL_Surface* surfaces[KEY_PRESS_SURFACE_TOTAL][2];
+};
+
 bool init();
-bool loadMedia();
-void close();
+bool loadMedia(Player& player);
+void close(Player& player);
 SDL_Surface* loadSurface(std::string path);
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
-SDL_Surface* gKeyPressSurfaces[KEY_PRESS_SURFACE_TOTAL];
-SDL_Surface* gCurrentSurface = NULL;
 
 int main(int argc, char* args[])
 {
@@ -33,31 +44,31 @@ int main(int argc, char* args[])
     }
     else
     {
-        if (!loadMedia())
+        Player player;
+        player.centerX = SCREEN_WIDTH / 2;
+        player.centerY = SCREEN_HEIGHT / 2;
+        player.currentDirection = KEY_PRESS_SURFACE_UP;
+
+        if (!loadMedia(player))
         {
             printf("Failed to load media!\n");
         }
         else
         {
-            bool isShooting = false;  // Variable para rastrear si se está disparando
+            bool isShooting = false;
             bool quit = false;
             SDL_Event e;
 
-            int centerX = SCREEN_WIDTH / 2;
-            int centerY = SCREEN_HEIGHT / 2;
+            Uint32 shootAnimationStartTime = 0;
+            const Uint32 SHOOT_ANIMATION_DURATION = 500;
 
-            const int MOVEMENT_SPEED = 5;
-
-            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP]; // Inicializar con el bmp de movimiento hacia arriba
-
-            // Aplicar la imagen en las coordenadas iniciales del centro de la pantalla
-            SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55)); // Fondo blanco
-            SDL_Rect destinationRect = {centerX, centerY, 0, 0};
-            SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, &destinationRect);
-            SDL_UpdateWindowSurface(gWindow);
+            Uint32 lastUpdateTime = SDL_GetTicks();
 
             while (!quit)
             {
+                Uint32 currentTime = SDL_GetTicks();
+                Uint32 deltaTime = currentTime - lastUpdateTime;
+
                 while (SDL_PollEvent(&e) != 0)
                 {
                     if (e.type == SDL_QUIT)
@@ -69,28 +80,27 @@ int main(int argc, char* args[])
                         switch (e.key.keysym.sym)
                         {
                         case SDLK_UP:
-                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
-                            centerY -= MOVEMENT_SPEED;
+                            player.currentDirection = KEY_PRESS_SURFACE_UP;
                             break;
 
                         case SDLK_DOWN:
-                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN];
-                            centerY += MOVEMENT_SPEED;
+                            player.currentDirection = KEY_PRESS_SURFACE_DOWN;
                             break;
 
                         case SDLK_LEFT:
-                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT];
-                            centerX -= MOVEMENT_SPEED;
+                            player.currentDirection = KEY_PRESS_SURFACE_LEFT;
                             break;
 
                         case SDLK_RIGHT:
-                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT];
-                            centerX += MOVEMENT_SPEED;
+                            player.currentDirection = KEY_PRESS_SURFACE_RIGHT;
                             break;
 
-                        case SDLK_SPACE:  // Tecla de espacio para cambiar entre disparo y estado normal
-                            isShooting = true;
-                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_SHOOT];
+                        case SDLK_SPACE:
+                            if (!isShooting)
+                            {
+                                isShooting = true;
+                                shootAnimationStartTime = currentTime;
+                            }
                             break;
 
                         default:
@@ -102,21 +112,70 @@ int main(int argc, char* args[])
                         if (e.key.keysym.sym == SDLK_SPACE)
                         {
                             isShooting = false;
-                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP]; // Cambiar de vuelta al estado normal
                         }
                     }
                 }
 
-                SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
-                SDL_Rect destinationRect = {centerX, centerY, 0, 0};
-                SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, &destinationRect);
-                SDL_UpdateWindowSurface(gWindow);
-            }
+                // Actualiza la posición y dirección actual
+                const int MOVEMENT_SPEED = 5;
 
-            close();
-            return 0;
+                switch (player.currentDirection)
+                {
+                case KEY_PRESS_SURFACE_UP:
+                    player.centerY -= MOVEMENT_SPEED;
+                    break;
+
+                case KEY_PRESS_SURFACE_DOWN:
+                    player.centerY += MOVEMENT_SPEED;
+                    break;
+
+                case KEY_PRESS_SURFACE_LEFT:
+                    player.centerX -= MOVEMENT_SPEED;
+                    break;
+
+                case KEY_PRESS_SURFACE_RIGHT:
+                    player.centerX += MOVEMENT_SPEED;
+                    break;
+
+                default:
+                    break;
+                }
+
+                // Renderiza la superficie actual
+                SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
+                SDL_Rect destinationRect = {player.centerX, player.centerY, 0, 0};
+
+                if (isShooting)
+                {
+                    Uint32 elapsedTime = currentTime - shootAnimationStartTime;
+                    if (elapsedTime >= SHOOT_ANIMATION_DURATION)
+                    {
+                        isShooting = false;
+                    }
+                    else
+                    {
+                        destinationRect = {player.centerX, player.centerY, 0, 0};
+                        SDL_BlitSurface(player.surfaces[player.currentDirection][1], NULL, gScreenSurface, &destinationRect);
+                    }
+                }
+                else
+                {
+                    SDL_BlitSurface(player.surfaces[player.currentDirection][0], NULL, gScreenSurface, &destinationRect);
+                }
+
+                // Actualiza la ventana
+                SDL_UpdateWindowSurface(gWindow);
+
+                lastUpdateTime = currentTime;
+
+                SDL_Delay(16);
+            }
         }
     }
+
+    Player player; // Nueva instancia de Player para utilizar close()
+    close(player);
+    return 0;
 }
 
 bool init()
@@ -143,40 +202,61 @@ bool init()
     return success;
 }
 
-bool loadMedia()
+bool loadMedia(Player& player)
 {
     bool success = true;
 
-    gKeyPressSurfaces[KEY_PRESS_SURFACE_UP] = loadSurface("assets/images/up.bmp");
-    if (gKeyPressSurfaces[KEY_PRESS_SURFACE_UP] == NULL)
+    // Imágenes de movimiento hacia arriba
+    player.surfaces[KEY_PRESS_SURFACE_UP][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/UpSlayerBFG.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_UP][0] == NULL)
     {
         printf("Failed to load up image!\n");
         success = false;
     }
+    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/UpSlayerBFGShoot.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_UP][1] == NULL)
+    {
+        printf("Failed to load shoot image!\n");
+        success = false;
+    }
 
-    gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN] = loadSurface("assets/images/down.bmp");
-    if (gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN] == NULL)
+    // Imágenes de movimiento hacia abajo
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/DownSlayerBFG.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_DOWN][0] == NULL)
     {
         printf("Failed to load down image!\n");
         success = false;
     }
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/DownSlayerBFGShoot.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_DOWN][1] == NULL)
+    {
+        printf("Failed to load shoot image!\n");
+        success = false;
+    }
 
-    gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT] = loadSurface("assets/images/left.bmp");
-    if (gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT] == NULL)
+    // Imágenes de movimiento hacia la izquierda
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/LeftSlayerBFG.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_LEFT][0] == NULL)
     {
         printf("Failed to load left image!\n");
         success = false;
     }
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/LeftSlayerBFGShoot.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_LEFT][1] == NULL)
+    {
+        printf("Failed to load shoot image!\n");
+        success = false;
+    }
 
-    gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT] = loadSurface("assets/images/right.bmp");
-    if (gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT] == NULL)
+    // Imágenes de movimiento hacia la derecha
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/RightSlayerBFG.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] == NULL)
     {
         printf("Failed to load right image!\n");
         success = false;
     }
-
-    gKeyPressSurfaces[KEY_PRESS_SURFACE_SHOOT] = loadSurface("assets/images/shoot.bmp");
-    if (gKeyPressSurfaces[KEY_PRESS_SURFACE_SHOOT] == NULL)
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/RightSlayerBFGShoot.bmp");
+    if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
         success = false;
@@ -185,12 +265,15 @@ bool loadMedia()
     return success;
 }
 
-void close()
+void close(Player& player)
 {
     for (int i = 0; i < KEY_PRESS_SURFACE_TOTAL; ++i)
     {
-        SDL_FreeSurface(gKeyPressSurfaces[i]);
-        gKeyPressSurfaces[i] = NULL;
+        for (int j = 0; j < 2; ++j)
+        {
+            SDL_FreeSurface(player.surfaces[i][j]);
+            player.surfaces[i][j] = NULL;
+        }
     }
 
     SDL_DestroyWindow(gWindow);
@@ -208,7 +291,7 @@ SDL_Surface* loadSurface(std::string path)
     }
     else
     {
-        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 255, 255, 255));
+        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 177, 64));
     }
 
     return loadedSurface;
