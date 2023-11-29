@@ -59,10 +59,10 @@ bool loadMedia()
 	bool success = true;
 
 	//Load splash image
-	gHelloWorld = SDL_LoadBMP( "assets/images/menu.bmp" );
+	gHelloWorld = SDL_LoadBMP( "assets/images/mapa.bmp" );
 	if( gHelloWorld == NULL )
 	{
-		printf( "Unable to load image %s! SDL Error: %s\n", "assets/images/menu.bmp", SDL_GetError() );
+		printf( "Unable to load image %s! SDL Error: %s\n", "assets/images/mapa.bmp", SDL_GetError() );
 		success = false;
 	}
 

@@ -25,8 +25,20 @@ bfg: src/bfg.cpp
 b: bfg
 	./bin/bfg
 
+mapa: src/mapa.cpp
+	g++ $< $(SDL) -o bin/$@
+
+map: mapa
+	./bin/mapa
+
 manager: src/SDLManager.cpp
 	g++ $< $(SDL) -o bin/$@
 
 mng: manager
 	./bin/manager
+
+main: src/main.cpp
+	g++ $< $(SDL) -o bin/$@
+
+mai: main
+	./bin/main
