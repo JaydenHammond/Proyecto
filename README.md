@@ -14,3 +14,8 @@ D RIGHT
 F SHOT
 
 ![](images/DIagrama.jpg)
+
+Enemigos
+Armas
+Loot
+Mapa
