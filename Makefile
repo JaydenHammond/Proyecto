@@ -5,7 +5,7 @@ FLAGS = -w -Wl,-subsystem,windows
 
 SDL = $(INCLUDE_PATH) $(LIB_PATH) $(FLAGS) $(LIBS)
 
-all: menu direccion movimiento manager
+all: menu direccion bfg manager
 
 menu: src/menu_img.cpp
 	g++ $< $(SDL) -o bin/$@
@@ -19,11 +19,11 @@ direccion: src/direccion.cpp
 d: direccion
 	./bin/direccion
 
-movimiento: src/movimiento.cpp
+bfg: src/bfg.cpp
 	g++ $< $(SDL) -o bin/$@
 
-mov: movimiento
-	./bin/movimiento
+b: bfg
+	./bin/bfg
 
 manager: src/SDLManager.cpp
 	g++ $< $(SDL) -o bin/$@
