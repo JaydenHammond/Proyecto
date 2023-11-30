@@ -42,3 +42,9 @@ main: src/main.cpp
 
 mai: main
 	./bin/main
+
+escopuerca: src/escopuerca.cpp
+	g++ $< $(SDL) -o bin/$@
+
+esc: escopuerca.cpp
+	./bin/escopuerca
