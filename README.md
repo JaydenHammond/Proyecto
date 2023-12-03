@@ -71,10 +71,13 @@ El juego presenta una variedad de enemigos demoníacos con comportamientos únic
 - **Cyberdemon:** Enormes demonios cibernéticos armados con lanzacohetes.
 
      ![Imagen del Cyberdemon](images/Personajes/CyberDemon.png)
-- **Spider Mastermind:** Gigantes arañas demoníacas con poderosas armas.
+
 - **Baron of Hell:** Gigantes demoníacos blindados con fuerza bruta.
 - **Zombieman:** Soldados demoníacos reanimados con habilidades de combate básicas.
 - **Pinky:** Bestias blindadas con embestidas poderosas.
+
+     ![Imagen del Cyberdemon](images/Personajes/Pinky.png)
+- **Spider Mastermind:** Gigantes arañas demoníacas con poderosas armas.
 
 ### Armas
 
@@ -106,13 +109,13 @@ Los jugadores pueden elegir entre una amplia gama de **armas** para enfrentarse 
 
 - **Medkit:** Restaura la salud del Doom Slayer.
 
-    ![Imagen del BFG9000](images/Loot/medkit.png)
+    ![Medkit](images/Loot/medkit.png)
 - **Ammo:** Suministros de munición para recargar armas.
 
-    ![Imagen del BFG9000](images/Loot/Ammo.png)
+    ![Ammo](images/Loot/Ammo.png)
 - **Armadura:** Proporciona protección adicional contra los ataques enemigos.
 
-    ![Imagen del BFG9000](images/Loot/Armor.png)
+    ![Armadura](images/Loot/Armor.png)
  
 
 ### Mapa
@@ -120,11 +123,15 @@ Los jugadores pueden elegir entre una amplia gama de **armas** para enfrentarse 
 Orienta tu camino a través del caos infernal con la ayuda de un detallado **mapa** que te guiará a través de los distintos niveles del juego.
 
 - **Marte**
-#  <img src="images/Mapas/Marte mapa.png" alt="Imagen del Mapa" width="50%" />
+
+<img src="images/Mapas/Marte mapa.png" alt="Imagen del Mapa marte" width="50%" />
+
+- **Tierra**
+#  <img src="images/Mapas/Tierra mapa.png" alt="Imagen del Mapa tierra" width="50%" />
 
 ¡Prepárate para la batalla definitiva contra las fuerzas del infierno en **DOOM Arcade**! Escoge sabiamente tus armas, enfréntate a los enemigos con valentía y lucha por tu supervivencia en este emocionante juego inspirado en el clásico DOOM.
 
 *¡Que comience la masacre!*
 
 
-![Imagen del BFG9000](images/Menu/Portal/portal.gif)
+![Portal](images/Menu/Portal/portal.gif)
