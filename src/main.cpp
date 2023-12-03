@@ -1,18 +1,20 @@
-#include "mapa.h"
+#include <sdl.h> 
+#include "../include/mapa.hpp"
+
 
 int main(int argc, char* args[]) {
-    SDLApp sdlApp;
+    SDLApp app;
 
-    // Inicializa SDL y crea la ventana
-    if (!sdlApp.init()) {
-        printf("¡Error al inicializar!\n");
+    // Start up SDL and create window
+    if (!app.init()) {
+        printf("Failed to initialize!\n");
     } else {
-        // Carga los recursos multimedia
-        if (!sdlApp.loadMedia()) {
-            printf("¡Error al cargar los medios!\n");
+        // Load media
+        if (!app.loadMedia()) {
+            printf("Failed to load media!\n");
         } else {
-            // Ejecuta la aplicación
-            sdlApp.run();
+            // Run the application
+            app.run();
         }
     }
 

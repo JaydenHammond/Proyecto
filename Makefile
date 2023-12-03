@@ -1,4 +1,4 @@
-INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2
+INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2 
 LIB_PATH = -LC:\msys64\mingw64\lib
 LIBS = -lmingw32 -lSDL2main -lSDL2
 FLAGS = -w -Wl,-subsystem,windows
