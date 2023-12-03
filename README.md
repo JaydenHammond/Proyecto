@@ -72,12 +72,10 @@ El juego presenta una variedad de enemigos demoníacos con comportamientos únic
 
      ![Imagen del Cyberdemon](images/Personajes/CyberDemon.png)
 
-- **Baron of Hell:** Gigantes demoníacos blindados con fuerza bruta.
-- **Zombieman:** Soldados demoníacos reanimados con habilidades de combate básicas.
 - **Pinky:** Bestias blindadas con embestidas poderosas.
 
      ![Imagen del Cyberdemon](images/Personajes/Pinky.png)
-- **Spider Mastermind:** Gigantes arañas demoníacas con poderosas armas.
+
 
 ### Armas
 
