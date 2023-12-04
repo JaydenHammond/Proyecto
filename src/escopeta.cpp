@@ -288,7 +288,7 @@ bool loadMedia(Player& player)
         printf("Failed to load up image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Armas/Balas/BFG/UpBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_UP][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -302,7 +302,7 @@ bool loadMedia(Player& player)
         printf("Failed to load down image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Armas/Balas/BFG/DownBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_DOWN][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -316,7 +316,7 @@ bool loadMedia(Player& player)
         printf("Failed to load left image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Armas/Balas/BFG/LeftBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_LEFT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -330,7 +330,7 @@ bool loadMedia(Player& player)
         printf("Failed to load right image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Armas/Balas/BFG/RightBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");

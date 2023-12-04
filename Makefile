@@ -1,4 +1,4 @@
-INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2 
+INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 LIB_PATH = -LC:\msys64\mingw64\lib
 LIBS = -lmingw32 -lSDL2main -lSDL2
 FLAGS = -w -Wl,-subsystem,windows
@@ -25,6 +25,12 @@ bfg: src/bfg.cpp
 b: bfg
 	./bin/bfg
 
+mini: src/mini.cpp
+	g++ $< $(SDL) -o bin/$@
+
+mi: mini
+	./bin/mini
+
 mapa: src/mapa.cpp
 	g++ $< $(SDL) -o bin/$@
 
@@ -43,8 +49,14 @@ main: src/main.cpp
 mai: main
 	./bin/main
 
-escopuerca: src/escopuerca.cpp
+escopeta: src/escopeta.cpp
 	g++ $< $(SDL) -o bin/$@
 
-esc: escopuerca.cpp
-	./bin/escopuerca
+esc: escopeta.cpp
+	./bin/escopeta
+
+selector: src/selector.cpp
+	g++ $< $(SDL) -o bin/$@
+
+sel: selector
+	./bin/selector

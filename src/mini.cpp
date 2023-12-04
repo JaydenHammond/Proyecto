@@ -6,8 +6,9 @@
 #include <string>
 #include <SDL_image.h>
 
-const int SCREEN_WIDTH = 1000;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 640;
+const int TILE_SIZE = 64;
 const int BULLET_SPEED = 8;
 
 enum KeyPressSurfaces
@@ -39,10 +40,16 @@ struct Bullet
     SDL_Surface* surface;
 };
 
+// Declarar las texturas globales
+SDL_Surface* tile1 = nullptr;
+SDL_Surface* tile2 = nullptr;
+SDL_Surface* tile3 = nullptr;
+
 bool init();
 bool loadMedia(Player& player);
 void close(Player& player);
 SDL_Surface* loadSurface(std::string path);
+void renderMap(int map[]);
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
@@ -78,6 +85,19 @@ int main(int argc, char* args[])
             // Vector para almacenar las balas
             std::vector<Bullet> bullets;
 
+            // Mapa de tiles
+            int mapa[100] = {
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 2, 3, 3, 3, 3,
+    3, 3, 1, 3, 3, 3, 3, 1, 3, 3,
+    2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 1, 3, 3, 3, 2, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 1, 3, 3,
+    3, 3, 1, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+
             while (!quit)
             {
                 Uint32 currentTime = SDL_GetTicks();
@@ -93,7 +113,7 @@ int main(int argc, char* args[])
                     {
                         switch (e.key.keysym.sym)
                         {
-                        
+
                         case SDLK_UP:
                             player.currentDirection = KEY_PRESS_SURFACE_UP;
                             break;
@@ -137,55 +157,44 @@ int main(int argc, char* args[])
                         }
                     }
                 }
-                            const int MOVEMENT_SPEED = 4;
 
-    switch (player.currentDirection)
-    {
-    case KEY_PRESS_SURFACE_UP:
-        if (player.centerY - MOVEMENT_SPEED >= 0)  // Verifica límite superior
-            player.centerY -= MOVEMENT_SPEED;
-        break;
+                const int MOVEMENT_SPEED = 4;
 
-    case KEY_PRESS_SURFACE_DOWN:
-        if (player.centerY + MOVEMENT_SPEED + player.surfaces[player.currentDirection][0]->h <= SCREEN_HEIGHT)  // Verifica límite inferior
-            player.centerY += MOVEMENT_SPEED;
-        break;
+                switch (player.currentDirection)
+                {
+                case KEY_PRESS_SURFACE_UP:
+                    if (player.centerY - MOVEMENT_SPEED >= 0)  // Verifica límite superior
+                        player.centerY -= MOVEMENT_SPEED;
+                    break;
 
-    case KEY_PRESS_SURFACE_LEFT:
-        if (player.centerX - MOVEMENT_SPEED >= 0)  // Verifica límite izquierdo
-            player.centerX -= MOVEMENT_SPEED;
-        break;
+                case KEY_PRESS_SURFACE_DOWN:
+                    if (player.centerY + MOVEMENT_SPEED + TILE_SIZE <= SCREEN_HEIGHT)  // Verifica límite inferior
+                        player.centerY += MOVEMENT_SPEED;
+                    break;
 
-    case KEY_PRESS_SURFACE_RIGHT:
-        if (player.centerX + MOVEMENT_SPEED + player.surfaces[player.currentDirection][0]->w <= SCREEN_WIDTH)  // Verifica límite derecho
-            player.centerX += MOVEMENT_SPEED;
-        break;
+                case KEY_PRESS_SURFACE_LEFT:
+                    if (player.centerX - MOVEMENT_SPEED >= 0)  // Verifica límite izquierdo
+                        player.centerX -= MOVEMENT_SPEED;
+                    break;
 
-    default:
-        break;
-    }
+                case KEY_PRESS_SURFACE_RIGHT:
+                    if (player.centerX + MOVEMENT_SPEED + TILE_SIZE <= SCREEN_WIDTH)  // Verifica límite derecho
+                        player.centerX += MOVEMENT_SPEED;
+                    break;
 
-    // Renderiza la superficie actual
-    SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
-    SDL_Rect destinationRect = {player.centerX, player.centerY, 0, 0};
+                default:
+                    break;
+                }
 
-    if (isShooting)
-    {
-        Uint32 elapsedTime = currentTime - shootAnimationStartTime;
-        if (elapsedTime >= SHOOT_ANIMATION_DURATION)
-        {
-            isShooting = false;
-        }
-        else
-        {
-            destinationRect = {player.centerX, player.centerY, 0, 0};
-            SDL_BlitSurface(player.surfaces[player.currentDirection][1], NULL, gScreenSurface, &destinationRect);
-        }
-    }
-    else
-    {
-        SDL_BlitSurface(player.surfaces[player.currentDirection][0], NULL, gScreenSurface, &destinationRect);
-    }
+                // Renderiza la superficie actual
+                SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
+
+                // Renderizar el mapa de tiles
+                renderMap(mapa);
+
+                // Renderizar al jugador
+                SDL_Rect destinationRect = {player.centerX, player.centerY, 0, 0};
+                SDL_BlitSurface(player.surfaces[player.currentDirection][0], NULL, gScreenSurface, &destinationRect);
 
                 // Actualizar la posición de las balas
                 for (auto& bullet : bullets)
@@ -212,15 +221,6 @@ int main(int argc, char* args[])
                         break;
                     }
                 }
-
-                
-
-                // Renderizar la superficie actual
-                SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
-
-                // Renderizar al jugador
-                SDL_Rect playerRect = {player.centerX, player.centerY, 0, 0};
-                SDL_BlitSurface(player.surfaces[player.currentDirection][0], NULL, gScreenSurface, &playerRect);
 
                 // Renderizar las balas
                 for (const auto& bullet : bullets)
@@ -252,7 +252,6 @@ int main(int argc, char* args[])
     return 0;
 }
 
-
 bool init()
 {
     bool success = true;
@@ -282,13 +281,13 @@ bool loadMedia(Player& player)
     bool success = true;
 
     // Imágenes de movimiento hacia arriba
-    player.surfaces[KEY_PRESS_SURFACE_UP][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/UpSlayerBFG.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_UP][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerUP.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_UP][0] == NULL)
     {
         printf("Failed to load up image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Armas/BFG/BalaUp.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_UP][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -296,13 +295,13 @@ bool loadMedia(Player& player)
     }
 
     // Imágenes de movimiento hacia abajo
-    player.surfaces[KEY_PRESS_SURFACE_DOWN][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/DownSlayerBFG.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerDown.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_DOWN][0] == NULL)
     {
         printf("Failed to load down image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Armas/BFG/BalaDown.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_DOWN][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -310,13 +309,13 @@ bool loadMedia(Player& player)
     }
 
     // Imágenes de movimiento hacia la izquierda
-    player.surfaces[KEY_PRESS_SURFACE_LEFT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/LeftSlayerBFG.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerLeft.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_LEFT][0] == NULL)
     {
         printf("Failed to load left image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Armas/BFG/BalaLeft.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_LEFT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -324,13 +323,13 @@ bool loadMedia(Player& player)
     }
 
     // Imágenes de movimiento hacia la derecha
-    player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/RightSlayerBFG.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerRight.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] == NULL)
     {
         printf("Failed to load right image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Slayer/Slayer/Shoot/BFG/bala.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Armas/BFG/BalaRight.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -359,7 +358,7 @@ void close(Player& player)
 
 SDL_Surface* loadSurface(std::string path)
 {
-    SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
+    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
     if (loadedSurface == NULL)
     {
         printf("Unable to load image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -371,3 +370,45 @@ SDL_Surface* loadSurface(std::string path)
 
     return loadedSurface;
 }
+
+void renderMap(int map[])
+{
+    // Renderizar el mapa de tiles en la pantalla
+    for (int i = 0; i < 100; ++i)
+    {
+        int tileX = (i % 10) * TILE_SIZE;
+        int tileY = (i / 10) * TILE_SIZE;
+
+        SDL_Rect tileRect = {tileX, tileY, TILE_SIZE, TILE_SIZE};
+
+        switch (map[i])
+        {
+        case 1:
+            // Renderizar tile 1 (puedes cargar la imagen correspondiente)
+            tile1 = loadSurface("assets/images/Tiles/1.png");
+            SDL_BlitSurface(tile1, NULL, gScreenSurface, &tileRect);
+            break;
+
+        case 2:
+            // Renderizar tile 2 (puedes cargar la imagen correspondiente)
+            tile2 = loadSurface("assets/images/Tiles/2.png");
+            SDL_BlitSurface(tile2, NULL, gScreenSurface, &tileRect);
+            break;
+
+        case 3:
+            // Renderizar tile 3 (puedes cargar la imagen correspondiente)
+            tile3 = loadSurface("assets/images/Tiles/3.png");
+            SDL_BlitSurface(tile3, NULL, gScreenSurface, &tileRect);
+            break;
+
+        // Agrega más casos según los tipos de tiles que tengas
+        // ...
+
+        default:
+            // Renderizar tile por defecto (puedes cargar la imagen correspondiente)
+            SDL_BlitSurface(tile3, NULL, gScreenSurface, &tileRect);
+            break;
+        }
+    }
+}
+

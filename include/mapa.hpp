@@ -7,10 +7,10 @@ public:
     ~SDLApp();
 
     bool init();
-    bool loadMedia();
+    bool loadMediaMapa();
     void close();
     void run();
-
+    void render();
 private:
     const int SCREEN_WIDTH = 1000;
     const int SCREEN_HEIGHT = 600;
@@ -22,7 +22,7 @@ private:
     bool running;
 
     void handleEvents();
-    void render();
+    
 };
 
 SDLApp::SDLApp() : gWindow(nullptr), gScreenSurface(nullptr), gHelloWorld(nullptr), running(false) {}
@@ -41,7 +41,7 @@ bool SDLApp::init() {
         success = false;
     } else {
         // Create window
-        gWindow = SDL_CreateWindow("DOOM PITERO", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        gWindow = SDL_CreateWindow("Mapa", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if (gWindow == NULL) {
             printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
             success = false;
@@ -54,7 +54,7 @@ bool SDLApp::init() {
     return success;
 }
 
-bool SDLApp::loadMedia() {
+bool SDLApp::loadMediaMapa() {
     // Loading success flag
     bool success = true;
 
@@ -116,7 +116,7 @@ int sdl_main(int argc, char* args[]) {
         printf("Failed to initialize!\n");
     } else {
         // Load media
-        if (!app.loadMedia()) {
+        if (!app.loadMediaMapa()) {
             printf("Failed to load media!\n");
         } else {
             // Run the application
