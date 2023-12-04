@@ -158,7 +158,7 @@ int main(int argc, char* args[])
                     }
                 }
 
-                const int MOVEMENT_SPEED = 4;
+                const int MOVEMENT_SPEED = 5;
 
                 switch (player.currentDirection)
                 {
