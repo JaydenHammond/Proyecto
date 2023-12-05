@@ -3,7 +3,7 @@
 int main(int argc, char* args[]) {
     SDLApp sdlApp;
 
-    // Inicializa SDL y crea la ventana
+// Inicializa SDL y crea la ventana
     if (!sdlApp.init()) {
         printf("¡Error al inicializar!\n");
     } else {
