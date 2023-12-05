@@ -25,12 +25,6 @@ bfg: src/bfg.cpp
 b: bfg
 	./bin/bfg
 
-mini: src/mini.cpp
-	g++ $< $(SDL) -o bin/$@
-
-mi: mini
-	./bin/mini
-
 mapa: src/mapa.cpp
 	g++ $< $(SDL) -o bin/$@
 
@@ -49,14 +43,8 @@ main: src/main.cpp
 mai: main
 	./bin/main
 
-escopeta: src/escopeta.cpp
+escopuerca: src/escopuerca.cpp
 	g++ $< $(SDL) -o bin/$@
 
-esc: escopeta.cpp
-	./bin/escopeta
-
-selector: src/selector.cpp
-	g++ $< $(SDL) -o bin/$@
-
-sel: selector
-	./bin/selector
+esc: escopuerca.cpp
+	./bin/escopuerca

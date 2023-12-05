@@ -166,7 +166,7 @@ int main(int argc, char* args[])
     }
 
     // Renderiza la superficie actual
-    // SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
+    SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
     SDL_Rect destinationRect = {player.centerX, player.centerY, 0, 0};
 
     if (isShooting)
@@ -213,11 +213,10 @@ int main(int argc, char* args[])
                     }
                 }
 
-                SDL_FillRect(gScreenSurface, NULL, 0); // Limpia la pantalla con color negro
-
+                
 
                 // Renderizar la superficie actual
-                // SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
+                SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 187, 79, 55));
 
                 // Renderizar al jugador
                 SDL_Rect playerRect = {player.centerX, player.centerY, 0, 0};
@@ -283,13 +282,13 @@ bool loadMedia(Player& player)
     bool success = true;
 
     // Imágenes de movimiento hacia arriba
-    player.surfaces[KEY_PRESS_SURFACE_UP][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerUP.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_UP][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/UpSlayerBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_UP][0] == NULL)
     {
         printf("Failed to load up image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Armas/BFG/BalaUp.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_UP][1] = loadSurface("assets/images/Armas/Balas/BFG/UpBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_UP][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -297,13 +296,13 @@ bool loadMedia(Player& player)
     }
 
     // Imágenes de movimiento hacia abajo
-    player.surfaces[KEY_PRESS_SURFACE_DOWN][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerDown.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/DownSlayerBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_DOWN][0] == NULL)
     {
         printf("Failed to load down image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Armas/BFG/BalaDown.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_DOWN][1] = loadSurface("assets/images/Armas/Balas/BFG/DownBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_DOWN][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -311,13 +310,13 @@ bool loadMedia(Player& player)
     }
 
     // Imágenes de movimiento hacia la izquierda
-    player.surfaces[KEY_PRESS_SURFACE_LEFT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerLeft.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/LeftSlayerBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_LEFT][0] == NULL)
     {
         printf("Failed to load left image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Armas/BFG/BalaLeft.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_LEFT][1] = loadSurface("assets/images/Armas/Balas/BFG/LeftBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_LEFT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");
@@ -325,13 +324,13 @@ bool loadMedia(Player& player)
     }
 
     // Imágenes de movimiento hacia la derecha
-    player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/SlayerRight.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] = loadSurface("assets/images/Slayer/Slayer/Arma/BFG/RightSlayerBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][0] == NULL)
     {
         printf("Failed to load right image!\n");
         success = false;
     }
-    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Armas/BFG/BalaRight.bmp");
+    player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] = loadSurface("assets/images/Armas/Balas/BFG/RightBalaBFG.bmp");
     if (player.surfaces[KEY_PRESS_SURFACE_RIGHT][1] == NULL)
     {
         printf("Failed to load shoot image!\n");

@@ -1,8 +1,14 @@
+#ifndef MAPA_H
+#define MAPA_H
+
 #include <SDL.h>
 #include <stdio.h>
 
 class SDLApp {
 public:
+    SDL_Window* getGWindow() const { return gWindow; }
+    SDL_Surface* getGScreenSurface() const { return gScreenSurface; }
+    
     SDLApp();
     ~SDLApp();
 
@@ -10,13 +16,17 @@ public:
     bool loadMediaMapa();
     void close();
     void run();
+<<<<<<< Updated upstream:include/mapa.hpp
     void render();
+=======
+
+
+>>>>>>> Stashed changes:src/mapa.h
 private:
     const int SCREEN_WIDTH = 1000;
     const int SCREEN_HEIGHT = 600;
-
-    SDL_Window* gWindow;
-    SDL_Surface* gScreenSurface;
+    SDL_Window* gWindow;           // Hacer el puntero al objeto SDL_Window público
+    SDL_Surface* gScreenSurface; 
     SDL_Surface* gHelloWorld;
 
     bool running;
@@ -108,7 +118,7 @@ void SDLApp::run() {
     }
 }
 
-int sdl_main(int argc, char* args[]) {
+int main(int argc, char* args[]) {
     SDLApp app;
 
     // Start up SDL and create window
@@ -126,3 +136,4 @@ int sdl_main(int argc, char* args[]) {
 
     return 0;
 }
+#endif
