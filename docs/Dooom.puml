@@ -4,30 +4,27 @@ class Doomguy{
     +Correr ()
     +Cambiar armas ()
     +Voltear ()
-    +Golpear ()
+
 
 }
 class Enemigo{
     +Disparar ()
     +Atacar ()
 }
-class Zombieman
 
-class ShotgunGuy
+
+
 
 class Imp
 
 class Pinky
 
-class Spectre
+class Cacodemon
 
-class LostSoul
-
-class BaronofHell
+class Prowler
 
 class Cyberdemon
 
-class SpiderMastermind
 
 class Arma{
     +Disparar ()
@@ -35,13 +32,13 @@ class Arma{
 
 class BFG9000
 
-class LanzaCoetes
+class Fusil
 
 class Escopeta
 
-class Motosierra
-
 class Pistola
+
+class Minigun
 
 class PistolaPlasma
 
@@ -49,17 +46,9 @@ class Escenario{
     +ElejirNivel (32)
     +Paredes ()
     +Piso ()
-    +Puerta ()
-    +Barril ()
+
 }
-enum Llave{
-    +Roja,
-    +Azul,
-    +Amarillo,
-}
-class Puerta{
-    +Abrir ()
-}
+
 
 class Salud{
     +Med-Kit ()
@@ -79,11 +68,6 @@ class Menu {
     +ElejirNuevojuego ()
     +ElejirContinuar ()
     +ElejirSalir ()
-}
-enum Dificultad{
-    +Facil,
-    +Normal,
-    +Dificil,
 }
 class DOOM{
     🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧🟧
@@ -113,11 +97,8 @@ class DOOM{
 }
 
 Doomguy o-- Arma
-Llave o-- Puerta
 Arma o-- Ammo
 Doomguy o-- Enemigo
-Doomguy --o Llave
-Llaves o-- Escenario
 Doomguy --|> Personaje
 Enemigo --|> Personaje
 Doomguy --* Salud
@@ -125,25 +106,21 @@ Doomguy --* Armadura
 Escenario *-- Doomguy
 Escenario *-- Enemigo
 Menu *-- Escenario
-Escenario --* Dificultad
 DOOM o-- Menu
-Zombieman --|> Enemigo
-ShotgunGuy --|> Enemigo
 Imp --|> Enemigo
 Pinky --|> Enemigo
-Spectre --|> Enemigo
-LostSoul --|> Enemigo
-BaronofHell --|> Enemigo
+Cacodemon --|> Enemigo
+Prowler --|> Enemigo
 Cyberdemon --|> Enemigo
-SpiderMastermind --|> Enemigo
+
 Arma <|-- BFG9000
-Arma <|-- LanzaCoetes
+Arma <|-- Fusil
 Arma <|-- Escopeta
-Arma <|-- Motosierra
+Arma <|-- minigun
 Arma <|-- Pistola
 Arma <|-- PistolaPlasma
 Ammo o-- BFG9000
-Ammo o-- LanzaCoetes
+Ammo o-- Minigun
 Ammo o-- Escopeta
 Ammo o-- Pistola
 Ammo o-- PistolaPlasma
