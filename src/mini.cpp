@@ -56,6 +56,7 @@ SDL_Surface* gScreenSurface = NULL;
 
 int main(int argc, char* args[])
 {
+    Menu mainMenu; 
     if (!init())
     {
         printf("Failed to initialize!\n");
@@ -100,6 +101,13 @@ int main(int argc, char* args[])
 
             while (!quit)
             {
+                mainMenu.handleEvents(e);
+
+            if (mainMenu.shouldQuit())
+            {
+                quit = true;
+            }
+
                 Uint32 currentTime = SDL_GetTicks();
                 Uint32 deltaTime = currentTime - lastUpdateTime;
 
