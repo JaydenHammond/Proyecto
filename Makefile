@@ -1,29 +1,24 @@
-INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2
+INCLUDE_PATH = -IC:\msys64\mingw64\include\SDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 LIB_PATH = -LC:\msys64\mingw64\lib
-LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+LIBS = -lmingw32 -lSDL2main -lSDL2
 FLAGS = -w -Wl,-subsystem,windows
 
 SDL = $(INCLUDE_PATH) $(LIB_PATH) $(FLAGS) $(LIBS)
-BIN_DIR = bin
 
-.PHONY: all clean
+menu: src/menu.cpp
+	g++ $< $(SDL) -o bin/$@
 
-all: menu main mini
+me: menu
+	./bin/menu
 
-menu: $(BIN_DIR)/menu
+main: src/main.cpp
+	g++ $< $(SDL) -o bin/$@
 
-main: $(BIN_DIR)/main
+m: main
+	./bin/main
 
-mini: $(BIN_DIR)/mini
+mini: src/mini.cpp
+	g++ $< $(SDL) -o bin/$@
 
-$(BIN_DIR)/menu: src/menu.cpp
-	g++ $< $(SDL) -o $@
-
-$(BIN_DIR)/main: src/main.cpp
-	g++ $< $(SDL) -o $@
-
-$(BIN_DIR)/mini: src/mini.cpp
-	g++ $< $(SDL) -o $@
-
-clean:
-	rm -f $(BIN_DIR)/*
+min: mini
+	./bin/mini

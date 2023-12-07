@@ -1,63 +1,42 @@
-
-
-#include "../include/menu.hpp"
+#include <SDL.h>
 #include <stdio.h>
+#include <string>
 
-SDL_Window* gWindow = NULL;
-SDL_Surface* gScreenSurface = NULL;
-SDL_Surface* gKeyPressSurfaces[KEY_PRESS_SURFACE_TOTAL];
-SDL_Surface* gCurrentSurface = NULL;
+// Screen dimension constants
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
-// Instancia de la clase Menu
-Menu menu;
-
-// Luego, en tu bucle principal o donde sea necesario:
-menu.handleEvents(e);
-
-int showMenu(SDL_Surface* gScreenSurface, MenuItem menuItems[], int itemCount)
+// Key press surfaces constants
+enum KeyPressSurfaces
 {
-    int choice = 0;
-    bool quit = false;
-    SDL_Event e;
+    KEY_PRESS_SURFACE_UP,
+    KEY_PRESS_SURFACE_DOWN,
+    KEY_PRESS_SURFACE_TOTAL
+};
 
-    while (!quit)
-    {
-        // Maneja eventos
-        while (SDL_PollEvent(&e) != 0)
-        {
-            if (e.type == SDL_QUIT)
-            {
-                quit = true;
-            }
-            else if (e.type == SDL_KEYDOWN)
-            {
-                switch (e.key.keysym.sym)
-                {
-                case SDLK_UP:
-                    choice = (choice - 1 + itemCount) % itemCount;
-                    break;
-                case SDLK_DOWN:
-                    choice = (choice + 1) % itemCount;
-                    break;
-                case SDLK_RETURN:
-                    quit = true;
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
+// Starts up SDL and creates window
+bool init();
 
-        // Renderiza el menú
-        SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
-        SDL_BlitSurface(menuItems[choice].surface, NULL, gScreenSurface, NULL);
+// Loads media
+bool loadMedia();
 
-        // Actualiza la ventana
-        SDL_UpdateWindowSurface(gWindow);
-    }
+// Frees media and shuts down SDL
+void close();
 
-    return choice;
-}
+// Loads individual image
+SDL_Surface* loadSurface(std::string path);
+
+// The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+// The surface contained by the window
+SDL_Surface* gScreenSurface = NULL;
+
+// The images that correspond to a keypress
+SDL_Surface* gKeyPressSurfaces[KEY_PRESS_SURFACE_TOTAL];
+
+// Current displayed image
+SDL_Surface* gCurrentSurface = NULL;
 
 bool init()
 {
@@ -141,42 +120,74 @@ SDL_Surface* loadSurface(std::string path)
     return loadedSurface;
 }
 
-void Menu::handleEvents(SDL_Event& e)
+int main(int argc, char* args[])
 {
-    while (SDL_PollEvent(&e) != 0)
+    // Start up SDL and create window
+    if (!init())
     {
-        if (e.type == SDL_QUIT)
+        printf("Failed to initialize!\n");
+    }
+    else
+    {
+        // Load media
+        if (!loadMedia())
         {
-            quit_ = true;
+            printf("Failed to load media!\n");
         }
-        else if (e.type == SDL_KEYDOWN)
+        else
         {
-            switch (e.key.keysym.sym)
+            // Main loop flag
+            bool quit = false;
+
+            // Event handler
+            SDL_Event e;
+
+            // Set default current surface
+            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
+
+            // While application is running
+            while (!quit)
             {
-            case SDLK_UP:
-                // Cambia a la imagen "up"
-                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
-                break;
-            case SDLK_DOWN:
-                // Cambia a la imagen "down"
-                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN];
-                break;
-            case SDLK_SPACE:
-                // Verifica la imagen actual y decide qué hacer
-                if (gCurrentSurface == gKeyPressSurfaces[KEY_PRESS_SURFACE_UP])
+                // Handle events on queue
+                while (SDL_PollEvent(&e) != 0)
                 {
-                    // Ingresa al bucle principal o realiza la acción deseada
-                    quit_ = true;  // En este ejemplo, salir del bucle principal
+                    // User requests quit
+                    if (e.type == SDL_QUIT)
+                    {
+                        quit = true;
+                    }
+                    // User presses a key
+                    else if (e.type == SDL_KEYDOWN)
+                    {
+                        // Select surfaces based on key press
+                        switch (e.key.keysym.sym)
+                        {
+                        case SDLK_UP:
+                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
+                            break;
+
+                        case SDLK_DOWN:
+                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN];
+                            break;
+
+                        default:
+                            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
+                            break;
+                        }
+                    }
                 }
-                else if (gCurrentSurface == gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN])
-                {
-                    // Cierra el programa o realiza la acción deseada
-                    quit_ = true;  // En este ejemplo, salir del bucle principal y cerrar el programa
-                }
-                break;
-            default:
-                break;
+
+                // Apply the current image
+                SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, NULL);
+
+                // Update the surface
+                SDL_UpdateWindowSurface(gWindow);
             }
         }
     }
+
+    // Free resources and close SDL
+    close();
+
+    return 0;
 }

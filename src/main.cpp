@@ -1,5 +1,4 @@
 #include <SDL.h>
-#include "../include/menu.hpp"
 #include <SDL_image.h>
 #include <stdio.h>
 #include <vector>
@@ -22,6 +21,14 @@ enum KeyPressSurfaces
     KEY_PRESS_SURFACE_SHOOT_LEFT,
     KEY_PRESS_SURFACE_SHOOT_RIGHT,
     KEY_PRESS_SURFACE_TOTAL
+};
+
+struct Enemy
+{
+    int x;
+    int y;
+    KeyPressSurfaces direction;
+    SDL_Surface* surface;
 };
 
 struct Player
@@ -47,70 +54,22 @@ SDL_Surface* tile2 = nullptr;
 SDL_Surface* tile3 = nullptr;
 
 bool init();
+bool spawnEnemyRequested = false;
 bool loadMedia(Player& player);
+void spawnEnemy();
+void moveEnemies();
 void close(Player& player);
 SDL_Surface* loadSurface(std::string path);
 void renderMap(int map[]);
+std::vector<Enemy> enemies;
 
 int main(int argc, char* args[])
 {
-    // Definir las imágenes para el menú
-    SDL_Surface* menuUpImage = loadSurface("assets/images/menu/jugar.bmp");
-    SDL_Surface* menuDownImage = loadSurface("assets/images/menu/no_jugar.bmp");
-
-    bool quit = false;
-
-
-    while (!quit)
-{
-    Uint32 currentTime = SDL_GetTicks();
-
-    while (SDL_PollEvent(&e) != 0)
-    {
-        if (e.type == SDL_QUIT)
-        {
-            quit = true;
-        }
-        else if (e.type == SDL_KEYDOWN)
-        {
-            switch (e.key.keysym.sym)
-            {
-            case SDLK_UP:
-                // Cambia a la imagen "up"
-                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
-                break;
-            case SDLK_DOWN:
-                // Cambia a la imagen "down"
-                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN];
-                break;
-            case SDLK_SPACE:
-                // Verifica la imagen actual y decide qué hacer
-                if (gCurrentSurface == gKeyPressSurfaces[KEY_PRESS_SURFACE_UP])
-                {
-                    // Ingresa al bucle principal o realiza la acción deseada
-                    quit = true;  // En este ejemplo, salir del bucle principal
-                }
-                else if (gCurrentSurface == gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN])
-                {
-                    // Cierra el programa o realiza la acción deseada
-                    quit = true;  // En este ejemplo, salir del bucle principal y cerrar el programa
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    // Aplica la imagen actual
-    SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, NULL);
-
-    // Actualiza la superficie de la ventana
-    SDL_UpdateWindowSurface(gWindow);
-
-    // Simula un retraso para controlar la velocidad de la ejecución
-    SDL_Delay(16);
-}
+    Uint32 lastEnemySpawnTime = 0;
+    const Uint32 ENEMY_SPAWN_INTERVAL = 200;
+    const int ENEMY_SPEED = 3;  // Set the speed to your desired value
+    Uint32 currentTime = 0;      // Declara currentTime aquí
+    Uint32 lastUpdateTime = 0;   // Declara lastUpdateTime aquí
 
     if (!init())
     {
@@ -132,10 +91,14 @@ int main(int argc, char* args[])
             bool isShooting = false;
             bool quit = false;
             SDL_Event e;
-
+            currentTime = SDL_GetTicks();
             Uint32 shootAnimationStartTime = 0;
             const Uint32 SHOOT_ANIMATION_DURATION = 500;
-
+            if (currentTime - lastEnemySpawnTime > ENEMY_SPAWN_INTERVAL)    
+            {
+                spawnEnemy();
+                lastEnemySpawnTime = currentTime; // Actualiza el tiempo de la última aparición de enemigo
+            }
             Uint32 lastUpdateTime = SDL_GetTicks();
 
             std::vector<Bullet> bullets;
@@ -152,7 +115,7 @@ int main(int argc, char* args[])
                 3, 3, 1, 3, 3, 3, 3, 3, 3, 3,
                 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
             };
-
+            spawnEnemy();
             while (!quit)
             {
                 Uint32 currentTime = SDL_GetTicks();
@@ -180,7 +143,11 @@ int main(int argc, char* args[])
                         case SDLK_RIGHT:
                             player.currentDirection = KEY_PRESS_SURFACE_RIGHT;
                             break;
+                            case SDLK_e:
+                            printf("Tecla E presionada\n");
+                            break;
                         case SDLK_SPACE:
+                            printf("Tecla E presionada\n");
                             if (!isShooting)
                             {
                                 isShooting = true;
@@ -206,9 +173,57 @@ int main(int argc, char* args[])
                         }
                     }
                 }
+                if (spawnEnemyRequested)
+        {
+            spawnEnemy();
+            spawnEnemyRequested = false;
+        }
 
+        moveEnemies();
+
+        for (const auto& enemy : enemies)
+        {
+            SDL_Rect enemyRect = { enemy.x, enemy.y, 0, 0 };
+            SDL_BlitSurface(enemy.surface, NULL, gScreenSurface, &enemyRect);
+        }
                 const int MOVEMENT_SPEED = 5;
+                if (currentTime - lastEnemySpawnTime > ENEMY_SPAWN_INTERVAL)
+{
+    
+        if (spawnEnemyRequested == true)
+        {
+            spawnEnemy();
+            spawnEnemyRequested = false; // Reinicia la bandera después de spawnear un enemigo
+        }
+    
+}
 
+for (auto& enemy : enemies)
+{
+    switch (enemy.direction)
+    {
+    case KEY_PRESS_SURFACE_UP:
+        enemy.y -= ENEMY_SPEED;
+        break;
+    case KEY_PRESS_SURFACE_DOWN:
+        enemy.y += ENEMY_SPEED;
+        break;
+    case KEY_PRESS_SURFACE_LEFT:
+        enemy.x -= ENEMY_SPEED;
+        break;
+    case KEY_PRESS_SURFACE_RIGHT:
+        enemy.x += ENEMY_SPEED;
+        break;
+    default:
+        break;
+    }
+}
+
+for (const auto& enemy : enemies)
+{
+    SDL_Rect enemyRect = {enemy.x, enemy.y, 0, 0};
+    SDL_BlitSurface(enemy.surface, NULL, gScreenSurface, &enemyRect);
+}
                 switch (player.currentDirection)
                 {
                 case KEY_PRESS_SURFACE_UP:
@@ -426,5 +441,27 @@ void renderMap(int map[])
             SDL_BlitSurface(tile3, NULL, gScreenSurface, &tileRect);
             break;
         }
+    }
+}
+void spawnEnemy()
+{
+    Enemy enemy;
+    enemy.x = rand() % (SCREEN_WIDTH - TILE_SIZE); // Ajusta el rango para evitar que aparezcan fuera de la pantalla
+    enemy.y = rand() % (SCREEN_HEIGHT - TILE_SIZE); // Ajusta el rango para evitar que aparezcan fuera de la pantalla
+    enemy.direction = static_cast<KeyPressSurfaces>(rand() % 4);
+    enemy.surface = loadSurface("assets/images/Personajes/caco.png");
+    enemies.push_back(enemy);
+}
+
+void moveEnemies()
+{
+    for (auto& enemy : enemies)
+    {
+        // Modifica la lógica de movimiento según tus necesidades
+        // Aquí hay un ejemplo de movimiento circular
+        double angle = SDL_GetTicks() * 0.001; // Controla la velocidad de rotación
+        double radius = 100.0;
+        enemy.x = SCREEN_WIDTH / 2 + static_cast<int>(radius * std::cos(angle));
+        enemy.y = SCREEN_HEIGHT / 2 + static_cast<int>(radius * std::sin(angle));
     }
 }
